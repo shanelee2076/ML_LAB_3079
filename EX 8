@@ -1,0 +1,40 @@
+import numpy as np
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+from sklearn.datasets import load_iris
+
+# Load the Iris dataset
+iris = load_iris()
+df = pd.DataFrame(iris['data'], columns=iris['feature_names'])
+X = df
+y = iris['target']
+
+print("First 5 rows of the dataset:")
+print(X.head())
+
+# Split dataset into training and test sets (90% train, 10% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.10, random_state=42)
+
+# Create KNN classifier with k=3
+classifier = KNeighborsClassifier(n_neighbors=3)
+classifier.fit(X_train, y_train)
+
+# Predict on test data
+y_pred = classifier.predict(X_test)
+
+# Compare original labels and predictions
+print('\n%-25s%-25s%-25s' % ('Original Label', 'Predicted Label', 'Correct/Wrong'))
+for i, label in enumerate(y_test):
+    status = 'Correct' if label == y_pred[i] else 'Wrong'
+    print('%-25s%-25s%-25s' % (label, y_pred[i], status))
+
+# Confusion Matrix
+print("\nConfusion Matrix:\n", metrics.confusion_matrix(y_test, y_pred))
+
+# Classification Report
+print("\nClassification Report:\n", metrics.classification_report(y_test, y_pred))
+
+# Accuracy
+print('Accuracy of the classifier: %0.2f' % metrics.accuracy_score(y_test, y_pred))
